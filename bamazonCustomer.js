@@ -64,11 +64,12 @@ function customerInput() {
           // Check to see if there are enough items available
           if(answer.quantity > res[0].stock_quantity) {
               console.log("There are only " + res[0].stock_quantity + " items available");
-              customerInput;
+              customerInput();
           }
           else {
               var newAmount = res[0].stock_quantity - answer.quantity;
               updateDatabase(answer.product_id, newAmount);
+
 
           }
         });
@@ -79,18 +80,12 @@ function customerInput() {
 // This function updates the database with a new quantity after the customer purchases the items
 function updateDatabase(id, quantity) {
   
-  var sql = "UPDATE products SET stock_quantity = 20 WHERE item_id = " + id + "";
+  var sql = "UPDATE products SET stock_quantity = " + quantity + " WHERE item_id = " + id + "";
   connection.query(sql, function(err, res) {
     if (err) throw err;
-    console.log(res.affectedRows + " record(s) updated");
-    console.log(res);
+
+
   });
-
-  // connection.query("SELECT * FROM products where item_id = " + quantity, function(err, res) {
-
-  //     console.log(res);
-  // });
-
 
 }
 
