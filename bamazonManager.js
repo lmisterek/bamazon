@@ -40,7 +40,8 @@ function afterConnection() {
         "View Products for Sale",
         "View Low Inventory",
         "Add to Inventory",
-        "Add New Product"
+        "Add New Product",
+        "End Program",
       ]
     })
       .then(function(answer) {
@@ -52,17 +53,20 @@ function afterConnection() {
 
         case "View Low Inventory":
           viewLow();
-          connection.end();
+          afterConnection();
           break;
 
         case "Add to Inventory":
-          viewProducts();
           updateInventory();
-          
+          //afterConnection();
           break;
 
         case "Add New Product":
           addProduct();
+          break;
+
+        case "End Program":
+          connection.end();
           break;
       }
     });
@@ -138,7 +142,7 @@ function addProduct() {
     .prompt([{
       name: "item_name",
       type: "input",
-      message: "What is the name of the pruduct that you would like to add?",
+      message: "What is the name of the product that you would like to add?",
     },
     {
       name: "department",
@@ -162,7 +166,7 @@ function addProduct() {
 
       	insertInventory(answer.item_name, answer.department, answer.cost, answer.quantity);
      });
-	//insertInventory();
+
 }
 
 //   * If a manager selects `Add New Product`, it should allow the manager to add a completely 
@@ -173,19 +177,22 @@ function insertInventory (item, department, cost, quantity) {
 	"VALUES ('" + item + "', '" + department + "', " + cost + ", " + quantity + ")";
 	  connection.query(sql, function(err, res) {
     if (err) throw err;
+
+    console.log("Inventory has been updated.");
+    afterConnection();
   });
+
 
 }
 
 function updateDatabase (id, units) {
-	console.log(id);
-	console.log(units);
 
 	var sql = "UPDATE products SET stock_quantity = stock_quantity + " + units + " WHERE item_id = " + id + "";
 	 connection.query(sql, function(err, res) {
 	    if (err) throw err;
 
 	    console.log("Quantitiy updated.");
+	    afterConnection();
 	  });
 }
 
