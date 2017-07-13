@@ -56,13 +56,13 @@ function afterConnection() {
           break;
 
         case "Add to Inventory":
-        	viewProducts();
+          viewProducts();
           updateInventory();
           
           break;
 
         case "Add New Product":
-          //addInventory();
+          addProduct();
           break;
       }
     });
@@ -131,9 +131,49 @@ function updateInventory() {
 
 }
 
+function addProduct() {
+
+	// Ask the manager the details of the new item
+	inquirer
+    .prompt([{
+      name: "item_name",
+      type: "input",
+      message: "What is the name of the pruduct that you would like to add?",
+    },
+    {
+      name: "department",
+      type: "input",
+      message: "What is the name of the department that this item belongs to?",
+
+    },
+    {
+      name: "cost",
+      type: "input",
+      message: "What is the cost of one unit?",
+
+    },
+    {
+      name: "quantity",
+      type: "input",
+      message: "How many units are available?",
+
+    }])
+      .then(function(answer) {
+
+      	insertInventory(answer.item_name, answer.department, answer.cost, answer.quantity);
+     });
+	//insertInventory();
+}
+
 //   * If a manager selects `Add New Product`, it should allow the manager to add a completely 
 //   new product to the store.
-function addInventory () {
+function insertInventory (item, department, cost, quantity) {
+	
+	var sql = "INSERT INTO products (product_name, department_name, price, stock_quantity)" +
+	"VALUES ('" + item + "', '" + department + "', " + cost + ", " + quantity + ")";
+	  connection.query(sql, function(err, res) {
+    if (err) throw err;
+  });
 
 }
 
