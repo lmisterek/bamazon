@@ -25,4 +25,4 @@ VALUES
 ("Breakfast Blend 60 count K-cups", "Food", 45.00, 20),
 ("Maxcraft Claw Hammer", "Tools", 10.89, 120),
 ("Melissa & Doug Easel", "Toys", 61.99, 2), 
-("Melissa & Doug Easel Accessory Set - Paint, Cups, Brushes, Chalk, Paper, Dry-Erase Marker", "Toys", 33.83, 3);
+("Melissa & Doug Easel Accessory Set", "Toys", 33.83, 3);

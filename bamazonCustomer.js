@@ -1,5 +1,10 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require('cli-table');
+var table = new Table({ head: ["Item ID number", "Product Name", "Price"] });
+
+var availability = true;
+
 
 
 // create the connection information for the sql database
@@ -18,19 +23,23 @@ var connection = mysql.createConnection({
 // connect to the mysql server and sql database
 connection.connect(function(err) {
   if (err) throw err;
+  
   // run the start function after the connection is made to prompt the user
   afterConnection();
-  
+
 });
 
 // function which reads everything in the database
 function afterConnection() {
   connection.query("SELECT * FROM products", function(err, res) {
+
     for (i = 0; i < res.length; i++) {
-        console.log("Item id: " + res[i].item_id + " || Product: " + res[i].product_name 
-      + " || Price: " + res[i].price);
+
+        table.push([res[i].item_id, res[i].product_name, res[i].price]);
     }
     if (err) throw err;
+
+    console.log(table.toString());
 
     customerInput();
 
@@ -56,6 +65,16 @@ function customerInput() {
 
     }])
     .then(function(answer) { 
+
+      var availability = true;
+
+        // Check to see if the item is available
+        connection.query("SELECT * FROM products where stock_quantity > 0", function(err, res) {
+              if (res[0].length > 0) {
+                  console.log("The number of results is " + res[0].length);
+              }   
+        });
+
         connection.query("SELECT * FROM products where item_id = " + answer.product_id, function(err, res) {
 
           if (err) throw err;
@@ -68,8 +87,8 @@ function customerInput() {
           else {
               var newAmount = res[0].stock_quantity - answer.quantity;
               updateDatabase(answer.product_id, newAmount);
-
-
+              displayTotal(answer.quantity*res[0].price);
+              connection.end();
           }
         });
 
@@ -82,9 +101,13 @@ function updateDatabase(id, quantity) {
   var sql = "UPDATE products SET stock_quantity = " + quantity + " WHERE item_id = " + id + "";
   connection.query(sql, function(err, res) {
     if (err) throw err;
-
-
   });
 
+
+}
+
+function displayTotal(total) {
+  console.log("Your total is $" + total + ".");
+  console.log("Thank you for buying from Bamazon!");
 }
 
